@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys
 import os
@@ -7,9 +7,73 @@ import re
 with open(sys.argv[1]) as f:
     inp = f.read()
 
-lines = inp.split('\n') #[:-1]
+cmds = inp.rstrip().lstrip('$').split('\n$')
 
-for l in lines:
-    print(l)
+class Dir(dict):
+    pass
+
+fs = Dir()
+#fs.parent = fs
+
+def newdir(parent):
+    d = Dir()
+    d.parent = parent
+    return d
+
+cur = fs
+
+for c in cmds:
+    lines = c.split('\n')
+    w = lines[0].split(' ')
+    #print(w)
+    #assert w[0] == '$'
+    cmd = w[1]
+    args = w[2:]
+    output = lines[1:]
+    print(f"cmd = {cmd} args = {args} output = {output}")
+    if cmd == 'cd':
+        assert len(args) == 1
+        a = args[0]
+        if a == '/':
+            cur = fs
+        elif a == '..':
+            cur = cur.parent
+        else:
+            if a not in cur:
+                cur[a] = newdir(cur)
+            cur = cur[a]
+    elif cmd == "ls":
+        for o in output:
+            (size, name) = o.split(' ')
+            if size == 'dir' and name not in cur:
+                cur[name] = newdir(cur)
+                continue
+            size = int(size)
+            cur[name] = size
+    else:
+        raise Exception(f"Unexpected command {cmd}")
 
 #inp = inp.strip();
+
+print(fs)
+
+found = []
+
+def dirsize(t, name):
+    tot = 0
+    for k,f in t.items():
+        print(f"adding {k} with {f}")
+        if type(f) == int:
+            tot += f
+        elif type(f) == Dir:
+            tot += dirsize(f, name+k+'/')
+        else:
+            raise Exception('Wat')
+    if tot < 100000:
+        found.append(tot)
+    print(f"returning {tot} for {name}")
+    return tot
+
+dirsize(fs, '/')
+
+print(sum(found))
