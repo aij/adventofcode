@@ -30,7 +30,7 @@ for c in cmds:
     cmd = w[1]
     args = w[2:]
     output = lines[1:]
-    print(f"cmd = {cmd} args = {args} output = {output}")
+    #print(f"cmd = {cmd} args = {args} output = {output}")
     if cmd == 'cd':
         assert len(args) == 1
         a = args[0]
@@ -58,11 +58,12 @@ for c in cmds:
 print(fs)
 
 found = []
+dirs = []
 
 def dirsize(t, name):
     tot = 0
     for k,f in t.items():
-        print(f"adding {k} with {f}")
+        #print(f"adding {k} with {f}")
         if type(f) == int:
             tot += f
         elif type(f) == Dir:
@@ -71,9 +72,28 @@ def dirsize(t, name):
             raise Exception('Wat')
     if tot < 100000:
         found.append(tot)
-    print(f"returning {tot} for {name}")
+    #print(f"returning {tot} for {name}")
+    dirs.append((tot, name))
     return tot
 
-dirsize(fs, '/')
+used = dirsize(fs, '/')
 
 print(sum(found))
+
+
+total = 70000000
+need = 30000000
+
+free = total - used
+
+to_free = need - free
+
+print(f"free = {free} to_free = {to_free} used = {used}")
+dirs.sort()
+
+for (s,n) in dirs:
+    if s > to_free:
+        print(f"Closest match = {s} at {n}           <------")
+        break
+    else:
+        print(f"not {(s,n)}")
