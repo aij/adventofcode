@@ -95,5 +95,5 @@ for (s,n) in dirs:
     if s > to_free:
         print(f"Closest match = {s} at {n}           <------")
         break
-    else:
-        print(f"not {(s,n)}")
+    #else:
+    #    print(f"not {(s,n)}")
