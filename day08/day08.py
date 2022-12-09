@@ -57,8 +57,9 @@ def line_score(h, range):
     for p in range:
         score += 1
         n = H(p)
-        if n > h:
+        if n >= h:
             break
+    #print(f"line score = {score}")
     return score
 
 def scenic_score(x,y):
@@ -69,6 +70,8 @@ def scenic_score(x,y):
     score *= line_score(h, (pos(i,y) for i in range(x+1, width)))
     score *= line_score(h, (pos(i,y) for i in range(x-1, -1, -1)))
     return score
+
+#print(scenic_score(2,1))
 
 m = max(scenic_score(x,y) for x in range(width) for y in range(width))
 print(m)
