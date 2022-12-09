@@ -45,3 +45,33 @@ scan(end, -1, -width)
 c  = sum(1 for x in visible if x)
 
 print(c)
+
+def H(p):
+    return int(grid[p])
+
+def pos(x,y):
+    return x + y*height
+
+def line_score(h, range):
+    score = 0
+    for p in range:
+        score += 1
+        n = H(p)
+        if n > h:
+            break
+    return score
+
+def scenic_score(x,y):
+    h = H(pos(x,y))
+    score = 1
+    score *= line_score(h, (pos(x,i) for i in range(y+1, width)))
+    score *= line_score(h, (pos(x,i) for i in range(y-1, -1, -1)))
+    score *= line_score(h, (pos(i,y) for i in range(x+1, width)))
+    score *= line_score(h, (pos(i,y) for i in range(x-1, -1, -1)))
+    return score
+
+m = max(scenic_score(x,y) for x in range(width) for y in range(width))
+print(m)
+
+# 5752800 is too high
+# That's not the right answer; your answer is too high. If you're stuck, make sure you're using the full input data; there are also some general tips on the about page, or you can ask for hints on the subreddit. Please wait one minute before trying again. (You guessed 5752800.)
