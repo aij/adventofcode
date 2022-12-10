@@ -47,3 +47,14 @@ for i in range(20, 221, 40):
     print(f"{i} * {history[i-1]} = {n} running {instrs[i-1]}" )
     s += n
 print(s)
+
+for (i,v) in enumerate(history):
+    cycle = i+1
+    if i%40 == 0:
+        print()
+    c = i%40 + 1
+    if abs(c-(v+1)) <= 1:
+        char = '#'
+    else:
+        char = '.'
+    print(char, end='')
