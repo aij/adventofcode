@@ -70,6 +70,7 @@ class Node():
         self.height = H(self.pos)
         self.h = ord(self.height)
         self.edges = []
+        self.revedges = []
     def __lt__(self, other):
         return self.pos < other.pos
 
@@ -94,9 +95,9 @@ for x in range(width):
             n = nodes[ni]
             if (n.h - m.h) <= 1:
                 m.edges.append(n)
-                # reverse edge not tracked
-            if m.char == 'S':
-                print(f'Neighbor of S: {n}')
+                n.revedges.append(m)
+            #if m.char == 'S':
+            #    print(f'Neighbor of S: {n}')
         if m.char == 'S':
             start = m
         elif m.char == 'E':
@@ -104,8 +105,8 @@ for x in range(width):
 
 assert len(nodes) == len(grid)
 
-for k,n in nodes.items():
-    print(repr(n))
+#for k,n in nodes.items():
+#    print(repr(n))
 
 # From https://github.com/norvig/pytudes/blob/main/ipynb/Advent%20of%20Code.ipynb
 from heapq       import heappop, heappush
@@ -139,3 +140,45 @@ path = astar_search(start, h_func, lambda n: n.edges)
 
 print(path)
 print(len(path)-1)
+
+# Based on https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm#Pseudocode and vague memory
+
+big = 1e42
+
+def dijkstra():
+    # graph = nodes, source = end
+    source = end
+
+    size = width*height
+    prev = [None]*size
+
+    #dist = [big]*size
+    #dist[source.pos] = 0
+    for n in nodes.values():
+        n.dist = big
+    source.dist = 0
+
+    q = list(nodes.values())
+
+    def nearest():
+        d = big
+        for n in q:
+            #print(n)
+            if n.dist <= d:
+                d = n.dist
+                found = n
+        return found
+    
+    while q:
+        u = nearest()
+        q.remove(u)
+        for v in u.revedges:
+            if v in q:
+                alt = u.dist + 1
+                if alt < v.dist:
+                    v.dist = alt
+                    prev[v.pos] = u # Not needed?
+
+dijkstra()
+
+print(min(x.dist for x in nodes.values() if x.height == 'a' ) )
