@@ -59,8 +59,31 @@ def check(pair):
 ok_indices = 0
 
 for i,v in enumerate(pairs):
-    print(f"Checking {v}")
+    #print(f"Checking {v}")
     if check(v):
         ok_indices += i+1
 
 print(ok_indices)
+
+
+packets = [x for p in pairs for x in p  ]
+
+divider1 = [[2]]
+divider2 = [[6]]
+
+packets += [ divider1, divider2 ]
+
+def cmp(a,b):
+    match check((a,b)):
+        case None: return 0
+        case True: return -1
+        case False: return 1
+        case _: raise Exception("no cmp")
+
+from functools import cmp_to_key
+packets.sort(key=cmp_to_key(cmp))
+
+i1 = packets.index(divider1) + 1
+i2 = packets.index(divider2) + 1
+
+print(i1*i2)
