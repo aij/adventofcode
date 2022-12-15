@@ -38,7 +38,7 @@ class M():
         self.d = md(s,b)
 
     def __repr__(self):
-        return f"{self.s} {self.b} d {m.d}"
+        return f"{self.s} {self.b} d {self.d}"
 
     def perimeter(self):
         d1 = self.d + 1
@@ -119,15 +119,16 @@ def part1():
     print(covered)
     return covered
 
+def part2():
+    for m in sensors:
+        print(f"Checking {m}")
+        for v in m.perimeter():
+            if not covered(v):
+                print(v)
+                tf = 4000000 * v.x + v.y
+                print(tf)
 
-for m in sensors:
-    print(f"Checking {m}")
-    for v in m.perimeter():
-        if not covered(v):
-            print(v)
-            tf = 4000000 * v.x + v.y
-            print(tf)
-
+part2()
 # That's not the right answer. If you're stuck, make sure you're using the full input data; there are also some general tips on the about page, or you can ask for hints on the subreddit. Please wait one minute before trying again. (You guessed 56000011.)
 
 print('done')
