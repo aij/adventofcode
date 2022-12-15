@@ -37,15 +37,21 @@ class M():
         self.b = b
         self.d = md(s,b)
 
+    def __repr__(self):
+        return f"{self.s} {self.b} d {m.d}"
+
     def perimeter(self):
         d1 = self.d + 1
         top = self.s.y - d1
         bottom = self.s.y + d1
-        for i in range(2*d1+1):
+        start = -top if top < 0 else 0
+        stop = box.stop - top if bottom > box.stop else 2*d1+1
+        for i in range(start, stop):
             y = top+i
-            if y not in box:
-                continue # TODO: Optimize?
-            j = i % d1
+            #if y not in box:
+            #    continue # TODO: Optimize?
+            assert y in box
+            j = i if i < d1 else 2*d1 - i
             x1 = self.s.x + j
             x2 = self.s.x - j
             if x1 in box:
@@ -59,6 +65,7 @@ beacons = []
 
 filename = 'example'; num=10; box = range(21)
 filename = 'input'; num = 2000000; box = range(4000001)
+#filename = 'oddone'; num = 2000000; box = range(4000001)
 
 with open(filename) as f:
     inp = f.read()
@@ -76,7 +83,7 @@ for l in lines:
         b = vec2(int(bx),int(by))
         m = M(s,b)
         #d = md(s, b)
-        print(f"{s} {b} d {m.d}")
+        print(m)
         #if num not in range(b.y - m.d, b.y + m.d)
         #if md(s, origin) > m.d + 20:
         #    print(f"Ignoring")
@@ -114,6 +121,7 @@ def part1():
 
 
 for m in sensors:
+    print(f"Checking {m}")
     for v in m.perimeter():
         if not covered(v):
             print(v)
