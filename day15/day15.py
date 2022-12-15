@@ -37,12 +37,28 @@ class M():
         self.b = b
         self.d = md(s,b)
 
+    def perimeter(self):
+        d1 = self.d + 1
+        top = self.s.y - d1
+        bottom = self.s.y + d1
+        for i in range(2*d1+1):
+            y = top+i
+            if y not in box:
+                continue # TODO: Optimize?
+            j = i % d1
+            x1 = self.s.x + j
+            x2 = self.s.x - j
+            if x1 in box:
+                yield vec2(y,x1)
+            if x2 in box:
+                yield vec2(y,x2)
+
 
 sensors = []
 beacons = []
 
-filename = 'example'; num=10
-filename = 'input'; num = 2000000
+filename = 'example'; num=10; box = range(21)
+filename = 'input'; num = 2000000; box = range(4000001)
 
 with open(filename) as f:
     inp = f.read()
@@ -96,11 +112,12 @@ def part1():
     print(covered)
     return covered
 
-for y in range(21):
-    for x in range(21):
-        if not covered(vec2(x,y)):
-            print((x,y))
-            tf = 4000000 * x + y
+
+for m in sensors:
+    for v in m.perimeter():
+        if not covered(v):
+            print(v)
+            tf = 4000000 * v.x + v.y
             print(tf)
 
 # That's not the right answer. If you're stuck, make sure you're using the full input data; there are also some general tips on the about page, or you can ask for hints on the subreddit. Please wait one minute before trying again. (You guessed 56000011.)
