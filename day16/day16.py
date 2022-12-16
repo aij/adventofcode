@@ -46,5 +46,71 @@ def maxi(time, at, open, frm):
             return besthere
     return bestother
 
-m = maxi(30, valves[start], [], start)
-print(m)
+#m = maxi(30, valves[start], [], start)
+#print(m)
+
+
+class State():
+    def __init__(self):
+        self.time = 26
+        self.at = [valves[start], valves[start] ]
+        self.open = []
+
+state = State()
+
+class Move():
+    def __init__(self, p, to):
+        self.p = p
+        self.to = to
+    def move(self):
+        p = self.p
+        self.frm = state.at[p]
+        state.at[p] = self.to
+        return 0
+    def unmove(self):
+        p = self.p
+        state.at[p] = self.frm
+
+class Open():
+    def __init__(self, p):
+        self.p = p
+    def move(self):
+        p = self.p
+        at = state.at[p]
+        state.open.append(at)
+        self.at = at
+        return at.rate * state.time
+    def unmove(self):
+        pop = state.open.pop()
+        assert pop is self.at
+
+def moves(p, frm):
+    at = state.at[p]
+    canopen = at not in state.open
+    m = [Move(p, valves[x]) for x in at.near # TODO if x not in frm
+         ]
+    if canopen: m.append(Open(p))
+    return m
+
+def max2(frm):
+    if state.time == 0 or len(state.open) == openable:
+        return 0
+
+    best = 0
+
+    movesme = moves(0, frm)
+    movesit = moves(1, frm)
+    state.time -= 1
+    for m in movesme:
+        s1 = m.move()
+        for n in movesit:
+            s2 = n.move()
+            s = s1 + s2 + max2(frm)
+            if s > best:
+                best = s
+            n.unmove()
+        m.unmove()
+    state.time += 1
+    return best
+
+print(max2(''))
