@@ -23,7 +23,7 @@ class Node():
 valves = {}
 
 for l in lines:
-    print(l)
+    print(l, flush=True)
     #m = r.
     (name, rate, ne) = r.search(l).groups()
     rate = int(rate)
@@ -110,12 +110,16 @@ def max2(frm):
             if s > best:
                 best = s
                 if state.time == 25:
-                    print(f"Best so far: {best}")
+                    print(f"Best so far: {best}", flush=True)
             if state.time > 7:
-                print(f'Unmoving time={state.time} additional_score={s} best at this level = {best}')
+                print(f'Unmoving time={state.time} additional_score={s} best at this level = {best}', flush=True)
             n.unmove()
         m.unmove()
     state.time += 1
     return best
 
 print(max2(''))
+
+
+# New plan: Build a strongy connected graph with interesting nodes and distances between them. Only consider moves to unopened nodes.
+# Moves will take variable amounts of time.
