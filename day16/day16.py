@@ -55,6 +55,7 @@ class State():
         self.time = 26
         self.at = [valves[start], valves[start] ]
         self.open = []
+        #self.frm = [None, None]
 
 state = State()
 
@@ -65,8 +66,9 @@ class Move():
     def move(self):
         p = self.p
         self.frm = state.at[p]
+        #state.frm[p] = self.frm
         state.at[p] = self.to
-        return 0
+        return (0, self.frm)
     def unmove(self):
         p = self.p
         state.at[p] = self.frm
@@ -79,7 +81,7 @@ class Open():
         at = state.at[p]
         state.open.append(at)
         self.at = at
-        return at.rate * state.time
+        return (at.rate * state.time, None)
     def unmove(self):
         pop = state.open.pop()
         assert pop is self.at
@@ -87,8 +89,7 @@ class Open():
 def moves(p, frm):
     at = state.at[p]
     canopen = at not in state.open
-    m = [Move(p, valves[x]) for x in at.near # TODO if x not in frm
-         ]
+    m = [Move(p, valves[x]) for x in at.near if x not in frm ]
     if canopen: m.append(Open(p))
     return m
 
@@ -102,12 +103,16 @@ def max2(frm):
     movesit = moves(1, frm)
     state.time -= 1
     for m in movesme:
-        s1 = m.move()
+        s1,f1 = m.move()
         for n in movesit:
-            s2 = n.move()
-            s = s1 + s2 + max2(frm)
+            s2,f2 = n.move()
+            s = s1 + s2 + max2([f1,f2])
             if s > best:
                 best = s
+                if state.time == 25:
+                    print(f"Best so far: {best}")
+            if state.time > 7:
+                print(f'Unmoving time={state.time} additional_score={s} best at this level = {best}')
             n.unmove()
         m.unmove()
     state.time += 1
