@@ -52,12 +52,19 @@ class M():
             #    continue # TODO: Optimize?
             assert y in box
             j = i if i < d1 else 2*d1 - i
+            #jdir = 1 if i < d1 else -1
             x1 = self.s.x + j
             x2 = self.s.x - j
             if x1 in box:
-                yield vec2(y,x1)
+                yield vec2(x1,y)
             if x2 in box:
-                yield vec2(y,x2)
+                yield vec2(x2,y)
+            x3 = x1 + 1
+            x4 = x2 - 1
+            if x3 in box:
+                yield vec2(x3,y)
+            if x4 in box:
+                yield vec2(x4,y)
 
 
 sensors = []
@@ -123,12 +130,17 @@ def part2():
     for m in sensors:
         print(f"Checking {m}")
         for v in m.perimeter():
+            #if not md(v, m.s) in range(m.d + 1, m.d + 3):
+            #    print(f"{v} is too far from {m.s}: {md(v, m.s)}")
+            #else: print(f"{v} is ok")
+            #assert md(v, m.s) in range(m.d + 1, m.d + 3)
             if not covered(v):
                 print(v)
                 tf = 4000000 * v.x + v.y
                 print(tf)
 
-part2()
+if __name__ == '__main__':
+    part2()
 # That's not the right answer. If you're stuck, make sure you're using the full input data; there are also some general tips on the about page, or you can ask for hints on the subreddit. Please wait one minute before trying again. (You guessed 56000011.)
 
 print('done')
