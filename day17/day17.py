@@ -140,7 +140,8 @@ grid = Grid()
 
 print('--------------------------------------------------')
 
-def simulate_n(n, pieces):
+def simulate_n(n, pieces, collect=0):
+    last = []
     for i in range(n):
         (p, m) = pieces.__next__()
 
@@ -153,10 +154,12 @@ def simulate_n(n, pieces):
         if i == 0:
             print(f"Started with {m}: {p}")
             grid.print(5)
+        if i >= n - collect:
+            last.append(newp[0][0])
         if i == n-1:
             print(f"Ended with {m}: {p}")
             grid.print(5)
-            return newp
+    return last
 
 def part1():
     simulate_n(2022, generate_pieces())
@@ -167,32 +170,39 @@ def part2():
     N = 1000000000000
     pieces = generate_pieces()
 
-    lcm = len(PIECES) * len(input) # too big, but good enough?
-
-    simulate_n(lcm, pieces)
-    base_height = grid.height()
-    print(f"Base height after {lcm} pieces: {base_height}")
+    lcm = len(PIECES) * len(input)  # too big, but good enough?
 
 
     def try_lcm():
         old_height = grid.height()
-        p = simulate_n(lcm, pieces)
+        sig = simulate_n(lcm, pieces, 40)
         addl_height = grid.height() - old_height
-        print(f"Found additional height {addl_height} after {lcm} more pieces")
-        return p
+        print(f"Addittional height {addl_height} after {lcm} more pieces, sig={sig}")
+        return sig
+
+    base_sig = try_lcm()
+    base_height = grid.height()
+    print(f"Base height after {lcm} pieces: {base_height}")
 
 
-    try1p = try_lcm()
-    try2p = try_lcm()
-    n = 2
-    while try2p[0][0] != try1p[0][0]: # leftmost is different
-        try2p = try_lcm()
-        n += 1
 
-    cycle_time = n * lcm
-    cycle_height = grid.height() - base_height
+    def find_cycle():
+        old_height = grid.height()
+        sig = try_lcm()
+        n = 1
+        while sig != base_sig:
+            sig = try_lcm()
+            n += 1
 
-    print(f"Found cycle! cycle_time={cycle_time} cycle_height={cycle_height} n={n}")
+        cycle_time = n * lcm
+        cycle_height = grid.height() - old_height
+
+        print(f"Found cycle! cycle_time={cycle_time} cycle_height={cycle_height} n={n}")
+        return (cycle_time, cycle_height)
+
+    #(cycle_time1, cycle_height1) = find_cycle()
+    (cycle_time, cycle_height) = find_cycle()
+    #assert cycle_height1 == cycle_height
 
     repetitions = (N - lcm ) // cycle_time
     remaining = (N - lcm) % cycle_time
@@ -202,7 +212,10 @@ def part2():
 
     print(f"Repetitions = {repetitions}, remaining={remaining}, rem_height={rem_height}")
 
-    print(base_height + (cycle_height*repetitions) + rem_height)
+    total_height = (base_height + (cycle_height*repetitions) + rem_height)
+    print(total_height)
+    if input == ex_in:
+        assert total_height == 1514285714288
 
 #part1()
 part2()
