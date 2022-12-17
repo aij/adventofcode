@@ -16,7 +16,7 @@ DIR = {
 def infinite_jets():
     while True:
         for x in input:
-            print(f"Jet: {x}")
+            #print(f"Jet: {x}")
             yield DIR[x]
 
 jets = infinite_jets()
@@ -98,7 +98,7 @@ class Grid:
         self.clear_if_full(max(ys), min(ys))
 
     def place(self, piece, mark=True):
-        print(f"Placing {piece}")
+        #print(f"Placing {piece}")
         for c in piece:
             self[c] = mark or True
 
@@ -108,14 +108,14 @@ class Grid:
         y = self.height() + 3
 
         p = list(shift(piece, (xoffset, y)))
-        print(f"Starting y={y} for {p}")
+        #print(f"Starting y={y} for {p}")
         while True:
             dir = jets.__next__()
             shifted = list(shift(p, dir))
             if all(c[0] in range(0,WIDTH) and c not in self for c in shifted):
                 p = shifted
             lower = list(shift(p, (0, -1)))
-            print(f"Checking {lower}")
+            #print(f"Checking {lower}")
             if any(c[1]<0 or c in self for c in lower):
                 self.place(p, mark)
                 break
@@ -169,10 +169,11 @@ def part2():
     repetitions = N // lcm - 1
     remaining = N % lcm
     simulate_n(remaining, pieces)
-    rem_height = grid.height() - base_height
+    rem_height = grid.height() - base_height - addl_height
 
     print(base_height + (addl_height*repetitions) + rem_height)
 
 part2()
 
 # That's not the right answer; your answer is too high. If you're stuck, make sure you're using the full input data; there are also some general tips on the about page, or you can ask for hints on the subreddit. Please wait one minute before trying again. (You guessed 1501258622957.)
+# That's not the right answer; your answer is too high. If you're stuck, make sure you're using the full input data; there are also some general tips on the about page, or you can ask for hints on the subreddit. Please wait one minute before trying again. (You guessed 1501258547211.)
