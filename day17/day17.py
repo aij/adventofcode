@@ -22,11 +22,11 @@ def infinite_jets():
 jets = infinite_jets()
 
 PIECES = [
-    ((0,0), (1,0), (2,0), (3,0)), # -
-    ((0,1), (1,1), (2,1), (1,0), (1,2)), # +
-    ((0,0), (1,0), (2,0), (2,1), (2,2)), # L
-    ((0,0), (0,1), (0,2), (0,3)), # |
-    ((0,0), (1,0), (0,1), (1,1)), # #
+    (((0,0), (1,0), (2,0), (3,0)),  '-'),
+    (((0,1), (1,1), (2,1), (1,0), (1,2)), '+'),
+    (((0,0), (1,0), (2,0), (2,1), (2,2)), 'L'),
+    (((0,0), (0,1), (0,2), (0,3)), '|'),
+     (((0,0), (1,0), (0,1), (1,1)), '#')
 ]
 
 def generate_pieces():
@@ -118,7 +118,7 @@ class Grid:
             #print(f"Checking {lower}")
             if any(c[1]<0 or c in self for c in lower):
                 self.place(p, mark)
-                break
+                return p
             p = lower
     def print(self, limit):
         h = self.height()
@@ -142,20 +142,21 @@ print('--------------------------------------------------')
 
 def simulate_n(n, pieces):
     for i in range(n):
-        p = pieces.__next__()
+        (p, m) = pieces.__next__()
 
         #if i < 11:
         #    print(f"After {i} pieces:")
         #    grid.print()
         #else: break
         #print(f"Piece {i}: {p}")
-        grid.insert(p)
+        newp = grid.insert(p, m)
         if i == 0:
-            print(f"Started with {p}")
-            grid.print(10)
+            print(f"Started with {m}: {p}")
+            grid.print(5)
         if i == n-1:
-            print(f"Ended with {p}")
-            grid.print(10)
+            print(f"Ended with {m}: {p}")
+            grid.print(5)
+            return newp
 
 def part1():
     simulate_n(2022, generate_pieces())
@@ -172,31 +173,36 @@ def part2():
     base_height = grid.height()
     print(f"Base height after {lcm} pieces: {base_height}")
 
-    simulate_n(lcm, pieces)
-    addl_height = grid.height() - base_height
 
-    print(f"Additional height per repetition: {addl_height}")
-
-    old_height = grid.height()
-    simulate_n(lcm, pieces)
-    addl_height2 = grid.height() - old_height
-    print(f"Double checking: {addl_height2}")
-    #assert addl_height == addl_height2
-    old_height = grid.height()
-    simulate_n(lcm, pieces)
-    addl_height2 = grid.height() - old_height
-    print(f"Double checking: {addl_height2}")
+    def try_lcm():
+        old_height = grid.height()
+        p = simulate_n(lcm, pieces)
+        addl_height = grid.height() - old_height
+        print(f"Found additional height {addl_height} after {lcm} more pieces")
+        return p
 
 
-    repetitions = N // lcm - 1
-    remaining = N % lcm
+    try1p = try_lcm()
+    try2p = try_lcm()
+    n = 2
+    while try2p[0][0] != try1p[0][0]: # leftmost is different
+        try2p = try_lcm()
+        n += 1
+
+    cycle_time = n * lcm
+    cycle_height = grid.height() - base_height
+
+    print(f"Found cycle! cycle_time={cycle_time} cycle_height={cycle_height} n={n}")
+
+    repetitions = (N - lcm ) // cycle_time
+    remaining = (N - lcm) % cycle_time
     old_height = grid.height()
     simulate_n(remaining, pieces)
     rem_height = grid.height() - old_height
 
     print(f"Repetitions = {repetitions}, remaining={remaining}, rem_height={rem_height}")
 
-    print(base_height + (addl_height*repetitions) + rem_height)
+    print(base_height + (cycle_height*repetitions) + rem_height)
 
 #part1()
 part2()
