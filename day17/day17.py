@@ -6,7 +6,7 @@ real_in = '>><<<>>>><<<><>>><><<<<>>>><>>>><<<<>><<<<>>>><<<<>>>><<<>>>><<<>><<<
 print(f"Len example={len(ex_in)}, input = {len(real_in)}")
 
 input = ex_in
-input = real_in
+#input = real_in
 
 DIR = {
     '<': (-1, 0),
@@ -120,8 +120,10 @@ class Grid:
                 self.place(p, mark)
                 break
             p = lower
-    def print(self):
-        for y in range(self.height()-1, -1, -1):
+    def print(self, limit):
+        h = self.height()
+        stop = max(h-limit, -1) if limit else -1
+        for y in range(h-1, stop, -1):
             print('|', end='')
             for c in self.__a[y]:
                 if type(c) == str:
@@ -148,10 +150,17 @@ def simulate_n(n, pieces):
         #else: break
         #print(f"Piece {i}: {p}")
         grid.insert(p)
+        if i == 0:
+            print(f"Started with {p}")
+            grid.print(10)
+        if i == n-1:
+            print(f"Ended with {p}")
+            grid.print(10)
 
 def part1():
     simulate_n(2022, generate_pieces())
     print(grid.height())
+    assert grid.height() == 3059
 
 def part2():
     N = 1000000000000
@@ -166,13 +175,30 @@ def part2():
     simulate_n(lcm, pieces)
     addl_height = grid.height() - base_height
 
+    print(f"Additional height per repetition: {addl_height}")
+
+    old_height = grid.height()
+    simulate_n(lcm, pieces)
+    addl_height2 = grid.height() - old_height
+    print(f"Double checking: {addl_height2}")
+    #assert addl_height == addl_height2
+    old_height = grid.height()
+    simulate_n(lcm, pieces)
+    addl_height2 = grid.height() - old_height
+    print(f"Double checking: {addl_height2}")
+
+
     repetitions = N // lcm - 1
     remaining = N % lcm
+    old_height = grid.height()
     simulate_n(remaining, pieces)
-    rem_height = grid.height() - base_height - addl_height
+    rem_height = grid.height() - old_height
+
+    print(f"Repetitions = {repetitions}, remaining={remaining}, rem_height={rem_height}")
 
     print(base_height + (addl_height*repetitions) + rem_height)
 
+#part1()
 part2()
 
 # That's not the right answer; your answer is too high. If you're stuck, make sure you're using the full input data; there are also some general tips on the about page, or you can ask for hints on the subreddit. Please wait one minute before trying again. (You guessed 1501258622957.)
