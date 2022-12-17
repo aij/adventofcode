@@ -6,7 +6,7 @@ real_in = '>><<<>>>><<<><>>><><<<<>>>><>>>><<<<>><<<<>>>><<<<>>>><<<>>>><<<>><<<
 print(f"Len example={len(ex_in)}, input = {len(real_in)}")
 
 input = ex_in
-#input = real_in
+input = real_in
 
 DIR = {
     '<': (-1, 0),
@@ -151,9 +151,9 @@ def simulate_n(n, pieces, collect=0):
         #else: break
         #print(f"Piece {i}: {p}")
         newp = grid.insert(p, m)
-        if i == 0:
-            print(f"Started with {m}: {p}")
-            grid.print(5)
+        # if i == 0:
+        #     print(f"Started with {m}: {p}")
+        #     grid.print(5)
         if i >= n - collect:
             last.append(newp[0][0])
         if i == n-1:
@@ -216,6 +216,8 @@ def part2():
     print(total_height)
     if input == ex_in:
         assert total_height == 1514285714288
+    else:
+        assert total_height == 1500874635587
 
 #part1()
 part2()
